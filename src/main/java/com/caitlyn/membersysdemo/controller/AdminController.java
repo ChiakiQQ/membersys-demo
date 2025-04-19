@@ -88,13 +88,25 @@ public class AdminController {
     }
 
     @GetMapping("/list")
-    public String showMemberList(Model model, HttpSession session) {
+    public String showMemberList(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "limit", defaultValue = "10") int limit,
+            Model model,
+            HttpSession session) {
         Object admin = session.getAttribute("admin");
         if (admin == null) {
             return "redirect:/admin/login";
         }
 
-        model.addAttribute("members", memberRepo.findAll());
+        int offset = (page - 1) * limit;
+        model.addAttribute("members", memberRepo.findPage(offset, limit));
+
+        int totalCount = memberRepo.count();
+        int totalPages = (int) Math.ceil((double) totalCount / limit);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("limit", limit);
+        model.addAttribute("totalCount", totalCount);
         return "admin/list";
     }
 

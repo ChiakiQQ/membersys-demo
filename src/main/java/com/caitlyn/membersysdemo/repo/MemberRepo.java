@@ -38,7 +38,7 @@ public class MemberRepo {
     }
 
     public List<Member> findAll() {
-        String sql = "SELECT * FROM member ORDER BY id DESC";
+        String sql = "SELECT * FROM member ORDER BY id ASC";
         return jdbcTemplate.query(sql, new MemberRowMapper());
     }
 
@@ -65,4 +65,14 @@ public class MemberRepo {
                 member.getId());
     }
 
+    public List<Member> findPage(int offset, int limit) {
+        String sql = "SELECT * FROM member ORDER BY id ASC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(sql, new MemberRowMapper(), limit, offset);
+    }
+
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM member";
+        List<Integer> result = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt(1));
+        return result.isEmpty() ? 0 : result.get(0);
+    }
 }
