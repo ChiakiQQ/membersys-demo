@@ -6,6 +6,19 @@
 <html>
 <head><title>會員列表</title></head>
 <body>
+<script>
+  const tabKey = "admin-tab-opened";
+  if (localStorage.getItem(tabKey)) {
+    // 其他分頁已開啟，直接跳轉
+    window.location.href = "${pageContext.request.contextPath}/admin/lock";
+  } else {
+    // 標記本分頁為開啟中
+    localStorage.setItem(tabKey, "true");
+    window.addEventListener("beforeunload", function () {
+      localStorage.removeItem(tabKey);
+    });
+  }
+</script>
 <h2>會員列表</h2>
 <p><a href="${pageContext.request.contextPath}/register">新增會員</a></p>
 <p><a href="${pageContext.request.contextPath}/admin/logout">      登出</a></p>

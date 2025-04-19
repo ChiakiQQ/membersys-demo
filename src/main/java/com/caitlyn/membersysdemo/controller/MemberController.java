@@ -16,7 +16,6 @@ public class MemberController {
     @Autowired
     private MemberRepo memberRepo;
 
-
     @GetMapping("/register")
     public String registerPage() {
         return "register";

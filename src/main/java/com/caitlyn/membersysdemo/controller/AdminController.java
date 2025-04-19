@@ -5,12 +5,16 @@ import com.caitlyn.membersysdemo.model.Mng;
 import com.caitlyn.membersysdemo.repo.MemberRepo;
 import com.caitlyn.membersysdemo.repo.MngRepo;
 import com.caitlyn.membersysdemo.service.ExportService;
-import com.caitlyn.membersysdemo.util.PasswordUtil; // 新增的匯入
+import com.caitlyn.membersysdemo.util.JwtUtil;
+import com.caitlyn.membersysdemo.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,13 +31,21 @@ public class AdminController {
     @Autowired
     private ExportService exportService;
 
+
+
     @GetMapping("/login")
     public String loginPage() {
         return "admin/login";
     }
 
+    @GetMapping("/lock")
+    public String showLockedPage() {
+        System.out.println("跳轉至 locked 頁面");
+        return "admin/lock";
+    }
+
     @PostMapping("/login")
-    public String handleLogin(HttpServletRequest request) {
+    public String handleLogin(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("name");
         String rawPassword = request.getParameter("password");
         String encryptedPassword = PasswordUtil.md5(rawPassword);
@@ -43,6 +55,17 @@ public class AdminController {
         if (admin != null && admin.getEnable() == 1) {
             HttpSession session = request.getSession();
             session.setAttribute("admin", admin);
+
+            String token = JwtUtil.generateToken(admin.getName());
+            Cookie jwtCookie = new Cookie("jwt", token);
+            jwtCookie.setPath("/");
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setMaxAge(86400); // 1 天
+            response.addCookie(jwtCookie);
+
+            ServletContext servletContext = session.getServletContext();
+            servletContext.setAttribute("active_" + admin.getName(), session.getId());
+
             return "redirect:/admin/list"; // 登入成功跳轉後台
         } else {
             return "redirect:/admin/login?error=true"; // 登入失敗返回登入頁
@@ -50,8 +73,9 @@ public class AdminController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session, HttpServletResponse response) {
         session.invalidate();
+        response.setHeader("Authorization", ""); // optional: 清空 header
         return "redirect:/admin/login";
     }
 
