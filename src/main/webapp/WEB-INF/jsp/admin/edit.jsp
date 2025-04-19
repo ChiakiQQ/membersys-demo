@@ -14,7 +14,7 @@
     <input type="email" id="email" name="email" value="${member.email}" required /><br/>
 
     <label for="password">密碼：</label>
-    <input type="password" id="password" name="password" value="${member.password}" required /><br/>
+    <input type="password" id="password" name="password" /><br/>
 
     <button type="submit">送出修改</button>
     <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/admin/list'">返回列表</button>

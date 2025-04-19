@@ -8,6 +8,7 @@
 <body>
 <h2>會員列表</h2>
 <p><a href="${pageContext.request.contextPath}/register">新增會員</a></p>
+<p><a href="${pageContext.request.contextPath}/admin/logout">      登出</a></p>
 
 <c:choose>
     <c:when test="${not empty members}">

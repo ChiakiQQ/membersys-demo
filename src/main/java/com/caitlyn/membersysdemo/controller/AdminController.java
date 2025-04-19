@@ -1,9 +1,11 @@
 package com.caitlyn.membersysdemo.controller;
 
+import com.caitlyn.membersysdemo.model.Member;
 import com.caitlyn.membersysdemo.model.Mng;
 import com.caitlyn.membersysdemo.repo.MemberRepo;
 import com.caitlyn.membersysdemo.repo.MngRepo;
 import com.caitlyn.membersysdemo.service.ExportService;
+import com.caitlyn.membersysdemo.util.PasswordUtil; // 新增的匯入
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,9 +35,10 @@ public class AdminController {
     @PostMapping("/login")
     public String handleLogin(HttpServletRequest request) {
         String name = request.getParameter("name");
-        String password = request.getParameter("password");
+        String rawPassword = request.getParameter("password");
+        String encryptedPassword = PasswordUtil.md5(rawPassword);
 
-        Mng admin = mngRepo.findByNameAndPassword(name, password);
+        Mng admin = mngRepo.findByNameAndPassword(name, encryptedPassword);
 
         if (admin != null && admin.getEnable() == 1) {
             HttpSession session = request.getSession();
@@ -86,10 +89,15 @@ public class AdminController {
     }
 
     @PostMapping("/edit")
-    public String updateMember(@ModelAttribute("member") com.caitlyn.membersysdemo.model.Member member, HttpSession session) {
+    public String updateMember(@ModelAttribute("member") Member member, HttpSession session) {
         Object admin = session.getAttribute("admin");
         if (admin == null) {
             return "redirect:/admin/login";
+        }
+
+        if (member.getPassword() != null && !member.getPassword().isEmpty()) {
+            String encryptedPassword = PasswordUtil.md5(member.getPassword());
+            member.setPassword(encryptedPassword);
         }
 
         memberRepo.update(member);
