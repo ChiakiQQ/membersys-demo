@@ -1,4 +1,4 @@
-package com.caitlyn.membersysdemo.model;
+package com.caitlyn.membersysdemo.repo;
 
 public class Member {
     private Long id;
