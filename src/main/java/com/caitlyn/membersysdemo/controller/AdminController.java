@@ -5,10 +5,10 @@ import com.caitlyn.membersysdemo.model.Mng;
 import com.caitlyn.membersysdemo.repo.MemberRepo;
 import com.caitlyn.membersysdemo.repo.MngRepo;
 import com.caitlyn.membersysdemo.service.ExportService;
+import com.caitlyn.membersysdemo.util.CaptchaUtil;
 import com.caitlyn.membersysdemo.util.JwtUtil;
 import com.caitlyn.membersysdemo.util.PasswordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +48,14 @@ public class AdminController {
     public String handleLogin(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("name");
         String rawPassword = request.getParameter("password");
+        String inputCaptcha = request.getParameter("captcha");
         String encryptedPassword = PasswordUtil.md5(rawPassword);
+
+        // 檢查驗證碼
+        String sessionCaptcha = (String) request.getSession().getAttribute("captcha");
+        if (sessionCaptcha == null || !sessionCaptcha.equalsIgnoreCase(inputCaptcha)) {
+            return "redirect:/admin/login?error=captcha";
+        }
 
         Mng admin = mngRepo.findByNameAndPassword(name, encryptedPassword);
 
@@ -63,6 +70,7 @@ public class AdminController {
             jwtCookie.setMaxAge(86400); // 1 天
             response.addCookie(jwtCookie);
 
+            //避免重複登入（含同瀏覽器） 認session
             ServletContext servletContext = session.getServletContext();
             servletContext.setAttribute("active_" + admin.getName(), session.getId());
 
@@ -137,5 +145,17 @@ public class AdminController {
         }
 
         exportService.exportMembers(response);
+    }
+
+    @GetMapping("/captcha")
+    public void getCaptcha(HttpSession session, HttpServletResponse response) throws IOException {
+        String captchaText = CaptchaUtil.generateCaptchaText(4);
+        session.setAttribute("captcha", captchaText);
+
+        byte[] imageBytes = CaptchaUtil.generateCaptchaImage(captchaText);
+
+        response.setContentType("image/png");
+        response.setContentLength(imageBytes.length);
+        response.getOutputStream().write(imageBytes);
     }
 }

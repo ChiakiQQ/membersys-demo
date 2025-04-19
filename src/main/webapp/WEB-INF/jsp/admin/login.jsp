@@ -16,11 +16,33 @@
                 <label for="password" class="form-label">密碼：</label>
                 <input type="password" id="password" name="password" class="form-control" required />
             </div>
+            <div class="mb-3">
+                <label for="captcha" class="form-label">驗證碼：</label>
+                <input type="text" id="captcha" name="captcha" class="form-control" required />
+                <img src="${pageContext.request.contextPath}/admin/captcha"
+                     onclick="this.src='${pageContext.request.contextPath}/captcha?d=' + Math.random()"
+                     title="點擊刷新"
+                     style="cursor:pointer;margin-top:0.5rem;">
+            </div>
             <button type="submit" class="btn btn-primary w-100">登入</button>
         </form>
-        <c:if test="${param.error != null}">
-            <p class="text-danger mt-3 text-center">帳號或密碼錯誤</p>
-        </c:if>
+    </div>
+    <!-- Captcha 錯誤提示 Modal -->
+    <div class="modal fade" id="captchaErrorModal" tabindex="-1" aria-labelledby="captchaErrorModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="captchaErrorModalLabel">錯誤</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+          </div>
+          <div class="modal-body text-center text-danger">
+            驗證碼錯誤，請重新輸入
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">確定</button>
+          </div>
+        </div>
+      </div>
     </div>
 </body>
 </html>

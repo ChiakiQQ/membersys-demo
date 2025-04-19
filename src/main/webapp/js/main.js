@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("error") === "captcha") {
+        const modal = new bootstrap.Modal(document.getElementById("captchaErrorModal"));
+        modal.show();
+    }
+
     document.querySelectorAll('.btn-delete').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
