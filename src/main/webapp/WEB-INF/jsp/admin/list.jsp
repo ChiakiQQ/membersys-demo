@@ -4,7 +4,10 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <html>
-<head><title>會員列表</title></head>
+<jsp:include page="/include/head.jsp" />
+<head>
+  <title>會員列表</title>
+</head>
 <body>
 <script>
   const tabKey = "admin-tab-opened";
@@ -19,9 +22,12 @@
     });
   }
 </script>
-<h2>會員列表</h2>
-<p><a href="${pageContext.request.contextPath}/register">新增會員</a></p>
-<p><a href="${pageContext.request.contextPath}/admin/logout">      登出</a></p>
+<div class="list-page">
+  <h2>會員列表</h2>
+  <div class="list-controls">
+    <a href="${pageContext.request.contextPath}/register">新增會員</a>
+    <a class="logout-link" href="${pageContext.request.contextPath}/admin/logout">登出</a>
+  </div>
 
 <c:choose>
     <c:when test="${not empty members}">
@@ -44,10 +50,9 @@
                         </script>
                     </td>
                     <td>
-                      <a href="${pageContext.request.contextPath}/admin/edit?id=${m.id}">編輯</a>
+                      <a href="#" class="btn-delete" data-id="${m.id}">刪除</a>
                       |
-                      <a href="${pageContext.request.contextPath}/admin/delete?id=${m.id}"
-                         onclick="return confirm('確定要刪除此會員嗎？');">刪除</a>
+                      <a href="${pageContext.request.contextPath}/admin/edit?id=${m.id}">編輯</a>
                     </td>
                 </tr>
             </c:forEach>
@@ -63,5 +68,27 @@
         <p style="color:gray;">尚未有會員註冊！</p>
     </c:otherwise>
 </c:choose>
+</div>
+
+<!-- 刪除確認 Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">確認刪除</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="關閉"></button>
+      </div>
+      <div class="modal-body">
+        你確定要刪除此會員嗎？
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">確認刪除</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </body>
 </html>
