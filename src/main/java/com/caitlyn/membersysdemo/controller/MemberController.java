@@ -16,7 +16,7 @@ public class MemberController {
 
 
     @GetMapping("/register")
-    public String showRegisterPage() {
+    public String registerPage() {
         return "register";
     }
 
@@ -31,8 +31,7 @@ public class MemberController {
                 username,
                 email,
                 password,
-                System.currentTimeMillis(),
-                null
+                System.currentTimeMillis()
         );
 
         memberRepo.insert(member);
