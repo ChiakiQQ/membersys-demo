@@ -3,13 +3,16 @@ package com.caitlyn.membersysdemo.controller;
 import com.caitlyn.membersysdemo.model.Mng;
 import com.caitlyn.membersysdemo.repo.MemberRepo;
 import com.caitlyn.membersysdemo.repo.MngRepo;
+import com.caitlyn.membersysdemo.service.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/admin")
@@ -19,6 +22,8 @@ public class AdminController {
     private MngRepo mngRepo;
     @Autowired
     private MemberRepo memberRepo;
+    @Autowired
+    private ExportService exportService;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -89,5 +94,16 @@ public class AdminController {
 
         memberRepo.update(member);
         return "redirect:/admin/list";
+    }
+
+    @GetMapping("/export")
+    public void exportMembers(HttpServletResponse response, HttpSession session) throws IOException {
+        Object admin = session.getAttribute("admin");
+        if (admin == null) {
+            response.sendRedirect("/admin/login");
+            return;
+        }
+
+        exportService.exportMembers(response);
     }
 }
