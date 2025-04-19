@@ -1,4 +1,4 @@
-package com.caitlyn.membersysdemo.util;
+package com.caitlyn.membersysdemo;
 
 import java.awt.*;
 import java.io.IOException;
