@@ -1,12 +1,19 @@
 package com.caitlyn.membersysdemo.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
+import com.caitlyn.membersysdemo.model.Member;
+import com.caitlyn.membersysdemo.repo.MemberRepo;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 public class MemberController {
+
+    @Autowired
+    private MemberRepo memberRepo;
+
 
     @GetMapping("/register")
     public String showRegisterPage() {
@@ -19,8 +26,16 @@ public class MemberController {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        // 暫時只印出，之後會接資料庫
-        System.out.println("註冊會員：username=" + username + ", email=" + email);
+        Member member = new Member(
+                null,
+                username,
+                email,
+                password,
+                System.currentTimeMillis(),
+                null
+        );
+
+        memberRepo.insert(member);
 
         return "redirect:/register?success";
     }
