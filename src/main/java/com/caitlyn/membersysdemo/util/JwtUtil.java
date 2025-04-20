@@ -6,6 +6,8 @@ import io.jsonwebtoken.security.Keys;
 
 import java.util.Date;
 import javax.crypto.SecretKey;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 public class JwtUtil {
 
@@ -34,5 +36,33 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public static boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static String extractTokenFromCookies(Cookie[] cookies) {
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public static boolean isAuthenticated(HttpServletRequest request) {
+        String token = extractTokenFromCookies(request.getCookies());
+        return token != null && validateToken(token);
     }
 }

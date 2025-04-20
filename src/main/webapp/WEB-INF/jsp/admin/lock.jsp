@@ -16,5 +16,6 @@
 </script>
 
 <p id="closeMsg" style="display:none; text-align:center; color:gray;">若此分頁未自動關閉，請手動關閉。</p>
+<p style="text-align:center; margin-top:20px;"><a href="${pageContext.request.contextPath}/admin/login">回登入頁</a></p>
 </body>
 </html>

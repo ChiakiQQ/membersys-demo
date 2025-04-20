@@ -6,14 +6,33 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
+
+
 import java.io.IOException;
 
+/**
+ * JwtFilter 用於處理 JWT 驗證與防止同帳號重複登入（基於 ServletContext）。
+ *
+ * 注意：若已採用 Redis 實作分散式登入鎖機制，
+ * 則此 Filter 中的 Session 驗證與 active session 控制將會冗餘。
+ * 可依專案實際需求停用或簡化此過濾器。
+ */
 public class JwtFilter implements Filter {
+
+    private final JwtFilterProperties jwtFilterProperties;
+
+    public JwtFilter(JwtFilterProperties jwtFilterProperties) {
+        this.jwtFilterProperties = jwtFilterProperties;
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+
+        if (!jwtFilterProperties.isEnabled()) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         // 取得 HTTP 請求與回應
         HttpServletRequest httpReq = (HttpServletRequest) request;

@@ -9,6 +9,16 @@ public class StartupBrowserOpener {
 
     public static void main(String[] args) {
         String url = "http://localhost:8080/admin/login";
+        url = "http://localhost:8080/redis/keys"; //redis key
+//        url = "http://localhost:8080/redis/value?key=admin_session:admin"; //redis value
+//        url = "http://localhost:8080/redis/delete?name=admin"; //清除redis鎖>>>已改啟動時清掉
+
+        /*--
+        //redis connect test
+        url = "http://localhost:8080/redis/test/set";
+        url = "http://localhost:8080/redis/test/get";
+        url = "http://localhost:8080/redis/deleteAll"; //清除redis
+        --*/
 
         if (Desktop.isDesktopSupported()) {
             try {
