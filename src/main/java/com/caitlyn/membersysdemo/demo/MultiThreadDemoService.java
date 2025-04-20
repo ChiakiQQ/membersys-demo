@@ -75,14 +75,22 @@ public class MultiThreadDemoService {
 
                         successCount++;
                         if (successCount >= times) {
-                            logger.info("[{}] 成功搶到 {} 次，進入休息狀態", times, threadName);
+                            logger.info("===[{}] 成功搶到 {} 次，進入休息狀態", threadName, times);
 
                             synchronized (MultiThreadDemoService.class) {
-                                Long finished = redisTemplate.opsForValue().increment("finished_thread_count", 1);
-                                if (finished != null && finished >= 5) {
+                                redisTemplate.opsForValue().set("finished_thread:" + threadId, true);
+                                Long finishedCount = 0L;
+                                for (int j = 1; j <= 5; j++) {
+                                    Boolean finished = redisTemplate.hasKey("finished_thread:" + j);
+                                    if (Boolean.TRUE.equals(finished)) {
+                                        finishedCount++;
+                                    }
+                                }
+                                if (finishedCount >= 5) {
+                                    for (int j = 1; j <= 5; j++) {
+                                        redisTemplate.delete("finished_thread:" + j);
+                                    }
                                     logger.info("---------------------------");
-                                    redisTemplate.delete("finished_thread_count");
-
                                     logger.info("全部執行緒已完成，{}", isRetry ? "重啟所有執行緒" : "休息");
                                     if (isRetry) {
                                         runDemo();
