@@ -36,6 +36,12 @@
             <version>1.26.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
         <!-- 排除 logback，使用 log4j2 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -133,13 +139,13 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-<!--        filter用-->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
-            <scope>provided</scope>
-        </dependency>
+<!--&lt;!&ndash;        filter用&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>jakarta.servlet</groupId>-->
+<!--            <artifactId>jakarta.servlet-api</artifactId>-->
+<!--            <version>6.0.0</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <!-- 測試依賴 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
