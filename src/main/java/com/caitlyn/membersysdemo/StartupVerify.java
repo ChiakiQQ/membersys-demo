@@ -1,24 +1,24 @@
 package com.caitlyn.membersysdemo;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class StartupBrowserOpener {
+public class StartupVerify {
 
     public static void main(String[] args) {
-        String url = "http://localhost:8080/admin/login";
+        String url = "http://localhost:8080/verify";
 
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().browse(new URI(url));
-                System.out.println("已開啟瀏覽器跳轉到: " + url);
+                System.out.println("已跳轉至: " + url);
             } catch (IOException | URISyntaxException e) {
                 System.err.println("無法開啟瀏覽器: " + e.getMessage());
             }
         } else {
-            System.err.println("Desktop 不支援，請手動開啟網址：" + url);
+            System.err.println("當前系統不支援 Desktop 操作");
         }
     }
 }

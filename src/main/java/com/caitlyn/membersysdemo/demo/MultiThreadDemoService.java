@@ -26,6 +26,7 @@ public class MultiThreadDemoService {
      */
     private final ExecutorService worker = Executors.newFixedThreadPool(5);
     private final Boolean isRetry = false; //搶完是否重啟
+    private final int times = 3;
     private final RedisTemplate<String, Object> redisTemplate;
     private final Random random = new Random();
 
@@ -73,8 +74,8 @@ public class MultiThreadDemoService {
                         logger.info("[{}] 累計所有執行緒成功搶到 {} 次", threadName, totalSuccess);
 
                         successCount++;
-                        if (successCount >= 5) {
-                            logger.info("[{}] 成功搶到 5 次，進入休息狀態", threadName);
+                        if (successCount >= times) {
+                            logger.info("[{}] 成功搶到 {} 次，進入休息狀態", times, threadName);
 
                             synchronized (MultiThreadDemoService.class) {
                                 Long finished = redisTemplate.opsForValue().increment("finished_thread_count", 1);

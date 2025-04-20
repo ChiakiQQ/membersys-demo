@@ -1,5 +1,6 @@
 package com.caitlyn.membersysdemo.controller;
 
+import com.caitlyn.membersysdemo.event.MemberRegisteredEvent;
 import com.caitlyn.membersysdemo.model.Member;
 import com.caitlyn.membersysdemo.repo.MemberRepo;
 import javax.servlet.http.HttpServletRequest;
@@ -9,12 +10,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 
 @Controller
 public class MemberController {
 
     @Autowired
     private MemberRepo memberRepo;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @GetMapping("/register")
     public String registerPage() {
@@ -37,6 +42,9 @@ public class MemberController {
         );
 
         memberRepo.insert(member);
+
+        // 發送會員註冊事件（將由 Listener 接收）
+        eventPublisher.publishEvent(new MemberRegisteredEvent(this, member));
 
         return "redirect:/register?success";
     }
