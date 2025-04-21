@@ -1,5 +1,6 @@
 package com.caitlyn.membersysdemo.model;
 
+import com.caitlyn.membersysdemo.util.RedisUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
@@ -9,13 +10,13 @@ import java.util.Random;
 public class MemberRedis {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisUtil redisUtil;
     private final Random random = new Random();
 
-    public MemberRedis(RedisTemplate<String, Object> redisTemplate) {
+    public MemberRedis(RedisTemplate<String, Object> redisTemplate, RedisUtil redisUtil) {
         this.redisTemplate = redisTemplate;
+        this.redisUtil = redisUtil;
     }
-
-
 
     // 快取會員列表，附加隨機過期時間以防止緩存雪崩
     public void cacheMemberList(String key, List<Member> memberList) {
@@ -72,6 +73,17 @@ public class MemberRedis {
         if (lockValue.equals(currentValue)) {
             redisTemplate.delete(lockKey);
         }
+    }
+
+    /**
+     * 鎖續命：延長指定鎖的 TTL
+     * @param lockKey 鎖定的 key
+     * @param lockValue 當前持有鎖的 value（確認後才續命）
+     * @param additionalSeconds 額外延長的秒數
+     * @return 是否續命成功
+     */
+    public boolean renewLock(String lockKey, String lockValue, int additionalSeconds) {
+        return redisUtil.renewIfMatch(lockKey, lockValue, additionalSeconds);
     }
 
     /**

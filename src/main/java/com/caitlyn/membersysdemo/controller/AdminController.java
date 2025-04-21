@@ -10,6 +10,7 @@ import com.caitlyn.membersysdemo.service.LockService;
 import com.caitlyn.membersysdemo.util.CaptchaUtil;
 import com.caitlyn.membersysdemo.util.JwtUtil;
 import com.caitlyn.membersysdemo.util.PasswordUtil;
+import com.caitlyn.membersysdemo.util.RedisUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class AdminController {
     private LockService lockService;
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -117,6 +120,7 @@ public class AdminController {
             @RequestParam(name = "limit", defaultValue = "10") int limit,
             Model model,
             HttpServletRequest request) {
+        renewAdminLock(request);
         if (!JwtUtil.isAuthenticated(request)) {
             logger.warn("Unauthorized access to /admin/list due to invalid or missing JWT");
             return "redirect:/admin/login";
@@ -145,6 +149,7 @@ public class AdminController {
 
     @GetMapping("/delete")
     public String deleteMember(@RequestParam("id") long id, HttpServletRequest request) {
+        renewAdminLock(request);
         // var admin = session.getAttribute("admin");
         // if (admin == null) {
         if (!JwtUtil.isAuthenticated(request)) {
@@ -159,6 +164,7 @@ public class AdminController {
 
     @GetMapping("/edit")
     public String showEditForm(@RequestParam("id") long id, Model model, HttpServletRequest request) {
+        renewAdminLock(request);
         // var admin = session.getAttribute("admin");
         // if (admin == null) {
         if (!JwtUtil.isAuthenticated(request)) {
@@ -172,6 +178,7 @@ public class AdminController {
 
     @PostMapping("/edit")
     public String updateMember(@ModelAttribute("member") Member member, HttpServletRequest request) {
+        renewAdminLock(request);
         // var admin = session.getAttribute("admin");
         // if (admin == null) {
         if (!JwtUtil.isAuthenticated(request)) {
@@ -190,6 +197,7 @@ public class AdminController {
 
     @GetMapping("/export")
     public void exportMembers(HttpServletResponse response, HttpServletRequest request) throws IOException {
+        renewAdminLock(request);
         // var admin = session.getAttribute("admin");
         // if (admin == null) {
         if (!JwtUtil.isAuthenticated(request)) {
@@ -211,5 +219,18 @@ public class AdminController {
         response.setContentType("image/png");
         response.setContentLength(imageBytes.length);
         response.getOutputStream().write(imageBytes);
+    }
+
+    private void renewAdminLock(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Object adminObj = session.getAttribute("admin");
+        if (adminObj instanceof Mng admin) {
+            String lockKey = "admin_session:" + admin.getName();
+            String lockValue = session.getId();
+            boolean renewed = redisUtil.renewIfMatch(lockKey, lockValue, 3600);
+            if (!renewed) {
+                logger.warn("無法續命 admin [{}] 的 Redis 鎖", admin.getName());
+            }
+        }
     }
 }

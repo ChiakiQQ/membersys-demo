@@ -31,4 +31,9 @@ public class LockServiceImpl implements LockService {
     public void unlock(String key, String value) {
         memberRedis.unlock(key, value);
     }
+
+    @Override
+    public boolean renewLock(String key, String value, int baseSeconds) {
+        return memberRedis.renewLock(key, value, baseSeconds);
+    }
 }

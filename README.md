@@ -3,6 +3,17 @@
 - Java 版本：17
 - Spring Boot 版本：2.7.18
 
+## Demo使用說明
+1. 啟用mySQL和redis
+2. 放上sql/內的ddl和init
+3. 啟動[Application](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FApplication.java)後，可以使用以下方法跳轉
+   * [StartupBrowserOpener.java](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FStartupBrowserOpener.java)
+   * [StartupRedis.java](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FStartupRedis.java)
+   * [StartupVerify.java](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FStartupVerify.java)
+
+---
+
+
 ## JSTL `<c:...>` 常用語法  
 > 以下標籤屬於 JSTL Core 標籤庫，使用前請在 JSP 開頭加入：  
 > `<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>`

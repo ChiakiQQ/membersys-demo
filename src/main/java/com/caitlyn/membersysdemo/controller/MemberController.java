@@ -4,8 +4,10 @@ import com.caitlyn.membersysdemo.event.MemberRegisteredEvent;
 import com.caitlyn.membersysdemo.model.Member;
 import com.caitlyn.membersysdemo.repo.MemberRepo;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import com.caitlyn.membersysdemo.util.PasswordUtil;
+import com.caitlyn.membersysdemo.util.RedisUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,9 @@ public class MemberController {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     @GetMapping("/register")
     public String registerPage() {
         return "register";
@@ -28,6 +33,13 @@ public class MemberController {
 
     @PostMapping("/register")
     public String handleRegister(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            String sessionId = session.getId();
+            String lockKey = "member_session:" + request.getParameter("username");
+            redisUtil.renewIfMatch(lockKey, sessionId, 3600);
+        }
+
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String rawPassword = request.getParameter("password");

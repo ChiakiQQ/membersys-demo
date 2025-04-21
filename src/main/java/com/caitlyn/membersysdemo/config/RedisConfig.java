@@ -1,6 +1,7 @@
 package com.caitlyn.membersysdemo.config;
 
 import com.caitlyn.membersysdemo.model.MemberRedis;
+import com.caitlyn.membersysdemo.util.RedisUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -32,8 +33,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public MemberRedis memberRedis(RedisTemplate<String, Object> redisTemplate) {
-        return new MemberRedis(redisTemplate);
+    public MemberRedis memberRedis(RedisTemplate<String, Object> redisTemplate, RedisUtil redisUtil) {
+        return new MemberRedis(redisTemplate, redisUtil);
     }
 
 }
