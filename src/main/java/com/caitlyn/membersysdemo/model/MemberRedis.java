@@ -123,7 +123,7 @@ public class MemberRedis {
      */
     public void deleteAllMemberListCache() {
         var keys = redisTemplate.keys("member_list:*");
-        if (keys != null && !keys.isEmpty()) {
+        if (!keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Set;
@@ -26,12 +27,16 @@ public class Application {
      */
     @EventListener(ApplicationReadyEvent.class)
     public void clearSessionKeysOnStartup() {
-        Set<String> keys = redisTemplate.keys("admin_session:*");
-        if (keys != null && !keys.isEmpty()) {
-            redisTemplate.delete(keys);
-            System.out.println("Cleared " + keys.size() + " admin session keys from Redis on startup.");
-        } else {
-            System.out.println("No admin session keys found in Redis.");
+        try {
+            Set<String> keys = redisTemplate.keys("admin_session:*");
+            if (keys != null && !keys.isEmpty()) {
+                redisTemplate.delete(keys);
+                System.out.println("Cleared " + keys.size() + " admin session keys from Redis on startup.");
+            } else {
+                System.out.println("No admin session keys found in Redis.");
+            }
+        } catch (RedisConnectionFailureException e) {
+            System.err.println("Redis 尚未啟動或連線失敗，略過清除快取。原因：" + e.getMessage());
         }
     }
 }

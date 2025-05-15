@@ -4,12 +4,14 @@
 - Spring Boot 版本：2.7.18
 
 ## Demo使用說明
-1. 啟用mySQL和redis
+1. 啟用mySQL和redis，修改 `application`mysql密碼
 2. 放上sql/內的ddl和init
 3. 啟動[Application](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FApplication.java)後，可以使用以下方法跳轉
    * [StartupBrowserOpener.java](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FStartupBrowserOpener.java)
    * [StartupRedis.java](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FStartupRedis.java)
    * [StartupVerify.java](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FStartupVerify.java)
+4. 登入帳號
+   * admin / admin
 
 ---
 
