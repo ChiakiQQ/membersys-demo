@@ -2,9 +2,11 @@
 
 - Java 版本：17
 - Spring Boot 版本：2.7.18
+- Maven
 
 ## Demo使用說明
-1. 啟用mySQL和redis，修改 `application`mysql密碼
+1. 啟用 MySQL 和 Redis，並修改 `application.properties` / `application.yml` 內的 MySQL 帳號與密碼  
+   - 若尚未安裝 MySQL / Redis，請參考下方「macOS 開發環境安裝（Homebrew）」說明。
 2. 放上sql/內的ddl和init
 3. 啟動[Application](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FApplication.java)後，可以使用以下方法跳轉
    * [StartupBrowserOpener.java](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FStartupBrowserOpener.java)
@@ -12,6 +14,38 @@
    * [StartupVerify.java](src%2Fmain%2Fjava%2Fcom%2Fcaitlyn%2Fmembersysdemo%2FStartupVerify.java)
 4. 登入帳號
    * admin / admin
+
+## macOS 開發環境安裝（Homebrew）
+
+以下指令適用於 macOS，且已安裝好 Homebrew 的情況。
+
+### 安裝與啟動 MySQL
+
+```bash
+brew update
+brew install mysql
+
+# 啟動 MySQL 服務
+brew services start mysql
+# 或（非常駐啟動）：
+# mysql.server start
+
+# 簡單測試連線
+mysql -u root -p
+```
+
+### 安裝與啟動 Redis
+
+```bash
+brew update
+brew install redis
+
+# 啟動 Redis 服務
+brew services start redis
+
+# 簡單測試連線
+redis-cli ping
+```
 
 ---
 
